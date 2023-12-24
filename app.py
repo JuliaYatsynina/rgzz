@@ -54,7 +54,7 @@ def save_photo(photo):
         photo_filename = str(photo.filename) + str(current_user.id)
     else:
         # Обработка для анонимного пользователя
-        photo_filename = "anonym_user_filename.jpg"
+        photo_filename = "filename.jpg"
     
     # Определяем путь для сохранения файла
     photo_path = os.path.join('static', photo_filename)
@@ -167,9 +167,10 @@ def add_article():
     
     title_form = request.form.get("title")
     text_form = request.form.get("text")
+    u_mail = current_user.mail
 
     # Создание новой статьи
-    new_article = articles(username=current_user.username, title=title_form, article_text=text_form)
+    new_article = articles(username=current_user.username, title=title_form, article_text=text_form, mail=u_mail)
     db.session.add(new_article)
     db.session.commit()
 
@@ -183,3 +184,9 @@ def view_article(article_id):
     if not article:
         return "Статья не найдена"
     return render_template("article_details.html", article=article)
+
+
+@app.route("/list_articles")
+def list_articles():
+    all_articles = articles.query.all()
+    return render_template("article_list.html", articles=all_articles)
